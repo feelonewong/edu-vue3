@@ -1,3 +1,4 @@
+import { useToken } from './../stores/accsssToken'
 import { createRouter, createWebHistory } from 'vue-router'
 import AppLayout from '@/components/Layouts/AppLayout.vue'
 const router = createRouter({
@@ -12,6 +13,9 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: AppLayout,
+      meta: {
+        requiresAuth: true
+      },
       children: [
         {
           path: 'menus',
@@ -43,4 +47,16 @@ const router = createRouter({
   ]
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((r) => r.meta?.requiresAuth)) {
+    // 循环to.matched函数里面每一个子元素是否含有requireAuth属性并且为true
+    const store = useToken()
+    if (!store.token.access_token) {
+      // 没有token的处理方式，跳转首页
+      next({ name: 'login', query: { redirect: to.fullPath } })
+      return  
+    }
+  }
+  next()
+})
 export default router

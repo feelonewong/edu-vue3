@@ -26,8 +26,9 @@ import { type FormRules, type FormInstance, ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { login } from '@/api/user'
 import { useToken } from '@/stores/accsssToken'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
+const route = useRoute()
 const form = reactive({
   phone: '18201288771',
   password: '111111'
@@ -63,7 +64,8 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
               // pinia存token
               useTokenRes.saveToken(result.content)
               ElMessage.success("登录成功~")
-              router.push('/')
+              let redirect = route.query.redirect as string
+              router.push( redirect || '/')
             }
           })
           .catch((err) => {

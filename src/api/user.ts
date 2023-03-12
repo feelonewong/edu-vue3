@@ -1,5 +1,5 @@
+import { useToken } from './../stores/accsssToken';
 import request from '@/utils/request'
-
 type ILoginInfo = {
   phone: string
   code?: string
@@ -28,3 +28,12 @@ export const logout = () => {
   })
 }
 
+export const refreshToken = () => {
+  return request({
+    url: '/front/user/refresh_token',
+    method: 'POST',
+    params: {
+      refreshtoken: useToken().token?.refresh_token
+    }
+  })
+}

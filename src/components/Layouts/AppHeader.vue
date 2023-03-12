@@ -53,7 +53,7 @@ onMounted(() => {
       }
     })
     .catch((err) => {
-      console.log(err)
+      // console.log(err)
     })
 })
 const handleLogOut = () => {

@@ -1,4 +1,4 @@
-import { useToken } from './../stores/accsssToken';
+import { useToken } from './../stores/accsssToken'
 import request from '@/utils/request'
 type ILoginInfo = {
   phone: string
@@ -17,7 +17,7 @@ export const login = (LoginInfo: ILoginInfo) => {
 export const getUserInfo = () => {
   return request({
     url: '/front/user/getInfo',
-    method: 'GET',
+    method: 'GET'
   })
 }
 
@@ -28,12 +28,21 @@ export const logout = () => {
   })
 }
 
+let isRefreshing = false
+let promiseRT: Promise<any>
 export const refreshToken = () => {
-  return request({
+  if (isRefreshing) {
+    return promiseRT
+  }
+  isRefreshing = true
+  promiseRT = request({
     url: '/front/user/refresh_token',
     method: 'POST',
     params: {
       refreshtoken: useToken().token?.refresh_token
     }
+  }).finally(()=>{
+    isRefreshing = false
   })
+  return promiseRT
 }

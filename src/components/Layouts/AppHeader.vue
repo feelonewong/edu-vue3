@@ -8,16 +8,15 @@
     </el-breadcrumb>
     <el-dropdown class="arrow">
       <span class="el-dropdown-link">
-        <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+        <el-avatar :src="userInfo.portrait" />
         <el-icon class="el-icon--right">
           <i-ep-arrow-down />
         </el-icon>
       </span>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>Action 1</el-dropdown-item>
-          <el-dropdown-item>Action 2</el-dropdown-item>
-          <el-dropdown-item divided>退出</el-dropdown-item>
+          <el-dropdown-item>{{ userInfo.userName }}</el-dropdown-item>
+          <el-dropdown-item divided @click="handleLogOut">退出</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -25,10 +24,60 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import {isCollapse} from "@/utils/data"
+import { ref, onMounted } from 'vue'
+import { isCollapse } from '@/utils/data'
+import { getUserInfo, logout } from '@/api/user'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useToken } from '@/stores/accsssToken'
+
+const router = useRouter()
+const useTokenRes = useToken()
+
 const handleIsCollapse = () => {
   isCollapse.value = !isCollapse.value
+}
+const userInfo = ref({
+  userName: '',
+  portrait: ''
+})
+onMounted(() => {
+  getUserInfo()
+    .then(({ data }) => {
+      let { success, content, message } = data
+      if (success) {
+        // portrait userName
+        userInfo.value = content
+      } else {
+        ElMessage.error(message)
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+})
+const handleLogOut = () => {
+  ElMessageBox.confirm('确定要退出吗?', '退出', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      logout().then(() => {
+        ElMessage({
+          type: 'success',
+          message: '退出！'
+        })
+        router.push('/login')
+        useTokenRes.saveToken('')
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '退出失败'
+      })
+    })
 }
 </script>
 

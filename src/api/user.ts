@@ -13,3 +13,18 @@ export const login = (LoginInfo: ILoginInfo) => {
     data: `phone=${LoginInfo.phone}&password=${LoginInfo.password}`
   })
 }
+
+export const getUserInfo = () => {
+  return request({
+    url: '/front/user/getInfo',
+    method: 'GET',
+  })
+}
+
+export const logout = () => {
+  return request({
+    url: '/front/user/logout',
+    method: 'POST'
+  })
+}
+

@@ -9,7 +9,13 @@
         <el-input v-model="form.password" />
       </el-form-item>
       <el-form-item>
-        <el-button class="submit-btn" type="primary" :loading="isLoading" @click="handleSubmit(formRef)">登录</el-button>
+        <el-button
+          class="submit-btn"
+          type="primary"
+          :loading="isLoading"
+          @click="handleSubmit(formRef)"
+          >登录</el-button
+        >
       </el-form-item>
     </el-form>
   </div>
@@ -19,10 +25,14 @@
 import { type FormRules, type FormInstance, ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { login } from '@/api/user'
+import { useToken } from '@/stores/accsssToken'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const form = reactive({
   phone: '18201288771',
   password: '111111'
 })
+const useTokenRes = useToken()
 const rules = reactive<FormRules>({
   phone: [
     { required: true, message: '电话号码不能为空', trigger: 'blur' },
@@ -47,15 +57,13 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
             isLoading.value = false
             const result = res.data
             if (!result.success) {
-              ElMessage.error(result.message)              
+              ElMessage.error(result.message)
               return
             } else {
-              // 成功存token，跳转首页
-              let token = JSON.parse(result.content) 
-              console.log(token)
-              localStorage.setItem('token', token.access_token)
-              localStorage.setItem('refreshToken', token.refresh_token)
-              ElMessage.success(result.message)
+              // pinia存token
+              useTokenRes.saveToken(result.content)
+              ElMessage.success("登录成功~")
+              router.push('/')
             }
           })
           .catch((err) => {

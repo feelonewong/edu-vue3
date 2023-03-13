@@ -38,6 +38,11 @@ const router = createRouter({
           component: () => import('../views/course.vue')
         },
         {
+          path: 'menus',
+          name: 'menus',
+          component: () => import('../views/menus/MenuIndex.vue')
+        },
+        {
           path: '/:xxx(.*)*',
           name: 'error-page',
           component: () => import('@/views/error-page.vue')
@@ -54,7 +59,7 @@ router.beforeEach((to, from, next) => {
     if (!store.token.access_token) {
       // 没有token的处理方式，跳转首页
       next({ name: 'login', query: { redirect: to.fullPath } })
-      return  
+      return
     }
   }
   next()

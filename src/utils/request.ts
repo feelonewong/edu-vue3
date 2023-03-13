@@ -7,7 +7,7 @@ import router from '@/router/index'
 const BASE_URL = import.meta.env.VITE_API_URL
 
 const request = axios.create({
-  // baseURL: BASE_URL
+  baseURL: BASE_URL
 })
 
 // 添加请求拦截器
